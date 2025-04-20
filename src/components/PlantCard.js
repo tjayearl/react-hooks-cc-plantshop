@@ -1,15 +1,30 @@
-import React from "react";
+// src/components/PlantCard.js
+import React, { useState } from "react"; // Import useState hook
 
-function PlantCard() {
+// Accept plant details (name, image, price) as props
+function PlantCard({ name, image, price }) {
+  // State to track if the plant is in stock, default is true
+  const [isInStock, setIsInStock] = useState(true);
+
+  // Function to toggle the inStock state when the button is clicked
+  function handleToggleStock() {
+    setIsInStock((currentStockStatus) => !currentStockStatus);
+  }
+
   return (
     <li className="card" data-testid="plant-item">
-      <img src={"https://via.placeholder.com/400"} alt={"plant name"} />
-      <h4>{"plant name"}</h4>
-      <p>Price: {"plant price"}</p>
-      {true ? (
-        <button className="primary">In Stock</button>
+      {/* Display plant image and name using props */}
+      <img src={image} alt={name} />
+      <h4>{name}</h4>
+      {/* Display plant price using props */}
+      <p>Price: {price}</p>
+      {/* Conditionally render the button based on isInStock state */}
+      {isInStock ? (
+        <button className="primary" onClick={handleToggleStock}>
+          In Stock
+        </button>
       ) : (
-        <button>Out of Stock</button>
+        <button onClick={handleToggleStock}>Out of Stock</button>
       )}
     </li>
   );
