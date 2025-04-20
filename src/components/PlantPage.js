@@ -23,7 +23,7 @@ function PlantPage() {
   // Callback function to add a new plant to the list
   function handleAddPlant(newPlant) {
     // Update the plants state by adding the new plant to the existing array
-    setPlants([...plants, newPlant]);
+    setPlants((currentPlants) => [...currentPlants, newPlant]);
   }
 
   // Callback function to update the search term state

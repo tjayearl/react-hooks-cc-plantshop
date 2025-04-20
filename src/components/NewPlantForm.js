@@ -14,13 +14,26 @@ function NewPlantForm({ onAddPlant }) {
   function handleSubmit(e) {
     e.preventDefault(); // Prevent the default page reload on form submit
 
+    // Basic validation: Check if fields are empty
+    if (!name || !image || !price) {
+      alert("Please fill in all fields.");
+      return; // Stop submission if validation fails
+    }
+
     // Create a new plant object from the form state
     // Ensure price is stored as a number
     const newPlant = {
       name: name,
       image: image,
-      price: parseFloat(price) || 0, // Convert price string to number, default to 0 if invalid
+      price: parseFloat(price), // Convert price string to number
     };
+
+    // Check if price conversion resulted in NaN (e.g., if input was not a valid number)
+    if (isNaN(newPlant.price)) {
+        alert("Please enter a valid price.");
+        return; // Stop submission if price is not a number
+    }
+
 
     // Send a POST request to the API to add the new plant
     fetch(API, {
@@ -30,7 +43,14 @@ function NewPlantForm({ onAddPlant }) {
       },
       body: JSON.stringify(newPlant),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        // Check if the response was successful (status code 2xx)
+        if (!res.ok) {
+          // If not ok, throw an error to be caught by .catch()
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json(); // Parse the JSON body of the response
+      })
       .then((addedPlant) => {
         // Call the onAddPlant callback passed from PlantPage
         // This updates the state in the parent component
@@ -40,7 +60,11 @@ function NewPlantForm({ onAddPlant }) {
         setImage("");
         setPrice("");
       })
-      .catch((error) => console.error("Error adding plant:", error));
+      .catch((error) => {
+        console.error("Error adding plant:", error);
+        // Optionally, inform the user that something went wrong
+        alert(`Failed to add plant: ${error.message}`);
+      });
   }
 
   return (
@@ -56,6 +80,7 @@ function NewPlantForm({ onAddPlant }) {
           value={name}
           // Update the name state when the input changes
           onChange={(e) => setName(e.target.value)}
+          required // Add basic HTML5 validation
         />
         <input
           type="text"
@@ -65,6 +90,7 @@ function NewPlantForm({ onAddPlant }) {
           value={image}
           // Update the image state when the input changes
           onChange={(e) => setImage(e.target.value)}
+           required // Add basic HTML5 validation
         />
         <input
           type="number"
@@ -75,6 +101,7 @@ function NewPlantForm({ onAddPlant }) {
           value={price}
           // Update the price state when the input changes
           onChange={(e) => setPrice(e.target.value)}
+           required // Add basic HTML5 validation
         />
         <button type="submit">Add Plant</button>
       </form>
