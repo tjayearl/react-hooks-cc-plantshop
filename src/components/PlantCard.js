@@ -1,30 +1,36 @@
-// src/components/PlantCard.js
-import React, { useState } from "react"; // Import useState hook
+import React, { useState } from "react";
 
-// Accept plant details (name, image, price) as props
-function PlantCard({ name, image, price }) {
-  // State to track if the plant is in stock, default is true
+function PlantCard({ id, image, name, price }) {
   const [isInStock, setIsInStock] = useState(true);
 
-  // Function to toggle the inStock state when the button is clicked
-  function handleToggleStock() {
-    setIsInStock((currentStockStatus) => !currentStockStatus);
+  function handleStockClick() {
+    setIsInStock(!isInStock);
+  }
+
+  function handleImageClick() {
+    console.log(`Clicked on the image for: ${name}`);
+    // You could add different logic here if needed
   }
 
   return (
     <li className="card" data-testid="plant-item">
-      {/* Display plant image and name using props */}
-      <img src={image} alt={name} />
+      {/* This img tag will now use the Pexels URL from db.json */}
+      <img
+        src={image} // Uses the image URL from the fetched data
+        alt={name}
+        onClick={handleImageClick}
+        style={{ cursor: 'pointer' }}
+        // Optional: Add error handling for broken images
+        onError={(e) => { e.target.onerror = null; e.target.src="path/to/default/image.png" }}
+      />
       <h4>{name}</h4>
-      {/* Display plant price using props */}
       <p>Price: {price}</p>
-      {/* Conditionally render the button based on isInStock state */}
       {isInStock ? (
-        <button className="primary" onClick={handleToggleStock}>
+        <button onClick={handleStockClick} className="primary">
           In Stock
         </button>
       ) : (
-        <button onClick={handleToggleStock}>Out of Stock</button>
+        <button onClick={handleStockClick}>Out of Stock</button>
       )}
     </li>
   );

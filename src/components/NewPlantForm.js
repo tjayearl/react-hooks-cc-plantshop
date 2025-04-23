@@ -1,107 +1,78 @@
-// src/components/NewPlantForm.js
-import React, { useState } from "react"; // Import useState hook
+import React, { useState } from "react";
 
-const API = "http://localhost:6001/plants";
-
-// Accept the onAddPlant callback function as a prop
+// Accept onAddPlant prop
 function NewPlantForm({ onAddPlant }) {
-  // State for each form input field
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
   const [price, setPrice] = useState("");
 
-  // Handle form submission
   function handleSubmit(e) {
-    e.preventDefault(); // Prevent the default page reload on form submit
+    e.preventDefault();
 
-    // Basic validation: Check if fields are empty
+    // Basic validation: ensure fields are not empty
     if (!name || !image || !price) {
-      alert("Please fill in all fields.");
-      return; // Stop submission if validation fails
+        alert("Please fill out all fields.");
+        return;
     }
 
-    // Create a new plant object from the form state
-    // Ensure price is stored as a number
-    const newPlant = {
-      name: name,
-      image: image,
-      price: parseFloat(price), // Convert price string to number
+    let newPlant = {
+      name, // same as name: name
+      image, // same as image: image
+      price: parseFloat(price) // Ensure price is a number
     };
 
-    // Check if price conversion resulted in NaN (e.g., if input was not a valid number)
-    if (isNaN(newPlant.price)) {
-        alert("Please enter a valid price.");
-        return; // Stop submission if price is not a number
-    }
-
-
-    // Send a POST request to the API to add the new plant
-    fetch(API, {
+    fetch("http://localhost:6001/plants", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json", // Corrected header value
       },
       body: JSON.stringify(newPlant),
     })
-      .then((res) => {
-        // Check if the response was successful (status code 2xx)
-        if (!res.ok) {
-          // If not ok, throw an error to be caught by .catch()
-          throw new Error(`HTTP error! status: ${res.status}`);
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
         }
-        return res.json(); // Parse the JSON body of the response
-      })
-      .then((addedPlant) => {
-        // Call the onAddPlant callback passed from PlantPage
-        // This updates the state in the parent component
+        return response.json();
+    })
+    .then(addedPlant => {
+        // Call the function passed from App.js to update the state
         onAddPlant(addedPlant);
-        // Reset the form fields after successful submission
+        // Clear the form fields after successful submission
         setName("");
         setImage("");
         setPrice("");
-      })
-      .catch((error) => {
+    })
+    .catch(error => {
         console.error("Error adding plant:", error);
-        // Optionally, inform the user that something went wrong
-        alert(`Failed to add plant: ${error.message}`);
-      });
+        alert("Failed to add plant. Please check the console for details.");
+    });
   }
 
   return (
     <div className="new-plant-form">
       <h2>New Plant</h2>
-      {/* Attach the handleSubmit function to the form's onSubmit event */}
       <form onSubmit={handleSubmit}>
         <input
+          onChange={(e)=>setName(e.target.value)}
           type="text"
           name="name"
           placeholder="Plant name"
-          // Control the input value with state
           value={name}
-          // Update the name state when the input changes
-          onChange={(e) => setName(e.target.value)}
-          required // Add basic HTML5 validation
         />
         <input
+          onChange={(e)=>setImage(e.target.value)}
           type="text"
           name="image"
           placeholder="Image URL"
-          // Control the input value with state
           value={image}
-          // Update the image state when the input changes
-          onChange={(e) => setImage(e.target.value)}
-           required // Add basic HTML5 validation
         />
         <input
+          onChange={(e)=>setPrice(e.target.value)}
           type="number"
           name="price"
-          step="0.01" // Allow decimal values for price
+          step="0.01" // Allows decimal prices
           placeholder="Price"
-          // Control the input value with state
           value={price}
-          // Update the price state when the input changes
-          onChange={(e) => setPrice(e.target.value)}
-           required // Add basic HTML5 validation
         />
         <button type="submit">Add Plant</button>
       </form>
