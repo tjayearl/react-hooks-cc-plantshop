@@ -3,15 +3,24 @@ import NewPlantForm from "./NewPlantForm";
 import PlantList from "./PlantList";
 import Search from "./Search";
 
-// Accept onAddPlant prop from App
-function PlantPage({ plants, onAddPlant, search, setSearch }) {
+function PlantPage({ 
+  plants, 
+  handleAddPlant, 
+  handleSearch, 
+  handleMarkSoldOut, 
+  handleDelete,
+  updatingIds  
+}) {
   return (
     <main>
-      {/* Pass onAddPlant down to NewPlantForm */}
-      <NewPlantForm onAddPlant={onAddPlant}/>
-      <Search search={search} setSearch={setSearch}/>
-      {/* PlantList receives the potentially filtered list */}
-      <PlantList plants={plants}/>
+      <NewPlantForm handleAddPlant={handleAddPlant} />
+      <Search handleSearch={handleSearch} />
+      <PlantList
+        plants={plants}
+        handleMarkSoldOut={handleMarkSoldOut}
+        handleDelete={handleDelete}
+        updatingIds={updatingIds} 
+      />
     </main>
   );
 }
