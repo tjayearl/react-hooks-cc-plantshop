@@ -1,19 +1,19 @@
 import React from "react";
 import PlantCard from "./PlantCard";
 
-function PlantList({ plants }) {
+function PlantList({ plants, handleMarkSoldOut, handleDelete, updatingIds }) {
   return (
-    <ul className="cards">{/* render PlantCards components in here */
-    plants.map((plant)=>
-      <PlantCard
-        key={plant.id}
-        id={plant.id}
-        image={plant.image}
-        name={plant.name}
-        price={plant.price}
-      />
-    )}
-    </ul>
+    <div className="cards">
+      {plants.map(plant => (
+        <PlantCard
+          key={plant.id}
+          plant={plant}
+          handleMarkSoldOut={handleMarkSoldOut}
+          handleDelete={handleDelete}
+          isUpdating={updatingIds.has(plant.id)} 
+        />
+      ))}
+    </div>
   );
 }
 
